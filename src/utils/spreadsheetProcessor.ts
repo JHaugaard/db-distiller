@@ -58,9 +58,22 @@ export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> 
         // Process and filter rows
         const filteredData: SpreadsheetRow[] = [];
         
-        rows.forEach(row => {
+        console.log('Column indices found:', columnIndices);
+        console.log('Total rows to process:', rows.length);
+        
+        rows.forEach((row, rowIndex) => {
           const gcoGcaScco = row[columnIndices.gcoGcaScco]?.toString().trim();
           const status = row[columnIndices.status]?.toString().trim();
+          
+          // Debug logging for first few rows
+          if (rowIndex < 5) {
+            console.log(`Row ${rowIndex}:`, {
+              gcoGcaScco: `"${gcoGcaScco}"`,
+              status: `"${status}"`,
+              rawGco: row[columnIndices.gcoGcaScco],
+              rawStatus: row[columnIndices.status]
+            });
+          }
           
           // Filter criteria: GCO/GCA/SCCO exactly "Haugaard" and valid status
           if (gcoGcaScco === 'Haugaard' && VALID_STATUSES.includes(status)) {
