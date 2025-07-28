@@ -75,8 +75,8 @@ export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> 
             });
           }
           
-          // Filter criteria: GCO/GCA/SCCO exactly "Haugaard" and valid status
-          if (gcoGcaScco === 'Haugaard' && VALID_STATUSES.includes(status)) {
+          // Filter criteria: GCO/GCA/SCCO exactly "Haugaard"
+          if (gcoGcaScco === 'Haugaard') {
             filteredData.push({
               id: row[columnIndices.id]?.toString() || '',
               dateReceived: row[columnIndices.dateReceived]?.toString() || '',
