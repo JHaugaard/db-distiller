@@ -2,7 +2,7 @@ import * as XLSX from 'xlsx';
 import { SpreadsheetRow } from '@/components/DataTable';
 
 const VALID_STATUSES = [
-  'OSSRA Review',
+  'OSRAA Review',
   'Internal Docs/Info Requested',
   'External Docs/Info Requested',
   'Out for Review',
