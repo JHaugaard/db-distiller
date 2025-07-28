@@ -32,8 +32,8 @@ export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> 
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         
-        // Convert to JSON with header row
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }) as string[][];
+        // Convert to JSON with header row, preserving raw values for proper date/text conversion
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false, dateNF: 'mm/dd/yyyy' }) as string[][];
         
         if (jsonData.length < 2) {
           resolve([]);
@@ -75,16 +75,41 @@ export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> 
             });
           }
           
-          // Filter criteria: GCO/GCA/SCCO exactly "Haugaard"
-          if (gcoGcaScco === 'Haugaard') {
+          // Filter criteria: GCO/GCA/SCCO exactly "Haugaard" and valid status
+          if (gcoGcaScco === 'Haugaard' && VALID_STATUSES.includes(status)) {
+            // Format date received properly
+            const dateReceived = row[columnIndices.dateReceived];
+            let formattedDateReceived = '';
+            if (dateReceived) {
+              // Handle Excel date serial numbers
+              if (typeof dateReceived === 'number') {
+                const excelDate = new Date((dateReceived - 25569) * 86400 * 1000);
+                formattedDateReceived = excelDate.toLocaleDateString('en-US');
+              } else {
+                formattedDateReceived = dateReceived.toString();
+              }
+            }
+
+            // Format status date properly
+            const statusDate = row[columnIndices.statusDate];
+            let formattedStatusDate = '';
+            if (statusDate) {
+              if (typeof statusDate === 'number') {
+                const excelDate = new Date((statusDate - 25569) * 86400 * 1000);
+                formattedStatusDate = excelDate.toLocaleDateString('en-US');
+              } else {
+                formattedStatusDate = statusDate.toString();
+              }
+            }
+
             filteredData.push({
               id: row[columnIndices.id]?.toString() || '',
-              dateReceived: row[columnIndices.dateReceived]?.toString() || '',
+              dateReceived: formattedDateReceived,
               principalInvestigator: row[columnIndices.principalInvestigator]?.toString() || '',
               sponsorContractor: row[columnIndices.sponsorContractor]?.toString() || '',
               cayuseId: row[columnIndices.cayuseId]?.toString() || '',
               status: status,
-              statusDate: row[columnIndices.statusDate]?.toString() || '',
+              statusDate: formattedStatusDate,
               oldDbNumber: row[columnIndices.oldDbNumber]?.toString() || ''
             });
           }
