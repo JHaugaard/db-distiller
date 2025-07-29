@@ -45,15 +45,27 @@ export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> 
         
         console.log('All headers with indices:', headers.map((h, i) => `${i}: "${h}"`));
         
-        // Create column index mapping
+        // Create column index mapping with better logic for Status vs Status Date
         const columnIndices: { [key: string]: number } = {};
         headers.forEach((header, index) => {
-          const mappedKey = Object.keys(COLUMN_MAPPING).find(key => 
-            header.toLowerCase().includes(key.toLowerCase()) || 
-            key.toLowerCase().includes(header.toLowerCase())
-          );
-          if (mappedKey) {
-            columnIndices[COLUMN_MAPPING[mappedKey as keyof typeof COLUMN_MAPPING]] = index;
+          const headerLower = header.toLowerCase().trim();
+          
+          // Check for Status Date FIRST (before Status) to avoid conflicts
+          if (headerLower.includes('status date')) {
+            columnIndices['statusDate'] = index;
+          } else if (headerLower === 'status' || (headerLower.includes('status') && !headerLower.includes('date'))) {
+            columnIndices['status'] = index;
+          } else if (headerLower.includes('cayuse')) {
+            columnIndices['cayuseId'] = index;
+          } else {
+            // Handle other mappings
+            const mappedKey = Object.keys(COLUMN_MAPPING).find(key => 
+              headerLower.includes(key.toLowerCase()) || 
+              key.toLowerCase().includes(headerLower)
+            );
+            if (mappedKey && !['Status', 'Status Date', 'Cayuse ID'].includes(mappedKey)) {
+              columnIndices[COLUMN_MAPPING[mappedKey as keyof typeof COLUMN_MAPPING]] = index;
+            }
           }
         });
         
