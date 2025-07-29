@@ -2,7 +2,7 @@ import * as XLSX from 'xlsx';
 import { SpreadsheetRow } from '@/components/DataTable';
 
 const VALID_STATUSES = [
-  'OSRAA Review',
+  'OSSRA Review',
   'Internal Docs/Info Requested',
   'External Docs/Info Requested',
   'Out for Review',
@@ -101,8 +101,8 @@ export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> 
             });
           }
           
-          // Filter criteria: GCO/GCA/SCCO exactly "Haugaard" (simplified, no status check)
-          if (gcoGcaScco === 'Haugaard') {
+          // Filter criteria: GCO/GCA/SCCO exactly "Haugaard" and valid status
+          if (gcoGcaScco === 'Haugaard' && VALID_STATUSES.includes(status)) {
             console.log('Found Haugaard row:', {
               rowIndex,
               gcoGcaScco,

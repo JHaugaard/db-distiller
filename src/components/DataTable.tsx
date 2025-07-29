@@ -17,6 +17,23 @@ interface DataTableProps {
   uploadTime: Date;
 }
 
+const getStatusColor = (status: string) => {
+  switch (status) {
+    case 'OSSRA Review':
+      return 'bg-purple-50 border-purple-100';
+    case 'Internal Docs/Info Requested':
+      return 'bg-blue-50 border-blue-100';
+    case 'External Docs/Info Requested':
+      return 'bg-green-50 border-green-100';
+    case 'Out for Review':
+      return 'bg-yellow-50 border-yellow-100';
+    case 'Out for Signature':
+      return 'bg-pink-50 border-pink-100';
+    default:
+      return '';
+  }
+};
+
 export const DataTable = ({ data, uploadTime }: DataTableProps) => {
   return (
     <div className="space-y-4">
@@ -40,7 +57,7 @@ export const DataTable = ({ data, uploadTime }: DataTableProps) => {
           </TableHeader>
           <TableBody>
             {data.map((row, index) => (
-              <TableRow key={index}>
+              <TableRow key={index} className={getStatusColor(row.status)}>
                 <TableCell className="font-mono text-sm">{row.id}</TableCell>
                 <TableCell className="text-sm">{row.dateReceived}</TableCell>
                 <TableCell className="text-sm">{row.principalInvestigator}</TableCell>

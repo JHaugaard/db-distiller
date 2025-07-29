@@ -38,7 +38,7 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="mb-8 print-hidden">
-          <h1 className="text-3xl font-bold mb-2">Beaver DB - Distilled</h1>
+          <h1 className="text-3xl font-bold mb-2">ACT Database Distiller</h1>
           <p className="text-muted-foreground">
             Upload and process sponsored agreements database spreadsheets
           </p>
