@@ -63,7 +63,13 @@ export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> 
         
         rows.forEach((row, rowIndex) => {
           const gcoGcaScco = row[columnIndices.gcoGcaScco]?.toString().trim();
-          const status = row[columnIndices.status]?.toString().trim();
+          
+          // Ensure Status is always treated as text string
+          let status = '';
+          const statusValue = row[columnIndices.status];
+          if (statusValue !== undefined && statusValue !== null) {
+            status = String(statusValue).trim();
+          }
           
           // Debug logging for first few rows
           if (rowIndex < 5) {
