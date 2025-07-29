@@ -83,6 +83,14 @@ export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> 
           
           // Filter criteria: GCO/GCA/SCCO exactly "Haugaard" (simplified, no status check)
           if (gcoGcaScco === 'Haugaard') {
+            console.log('Found Haugaard row:', {
+              rowIndex,
+              gcoGcaScco,
+              id: row[columnIndices.id],
+              principalInvestigator: row[columnIndices.principalInvestigator],
+              status,
+              fullRow: row
+            });
             // Format date received properly
             const dateReceived = row[columnIndices.dateReceived];
             let formattedDateReceived = '';
