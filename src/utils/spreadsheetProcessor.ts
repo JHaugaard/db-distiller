@@ -46,12 +46,21 @@ export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> 
         // Create column index mapping
         const columnIndices: { [key: string]: number } = {};
         headers.forEach((header, index) => {
-          const mappedKey = Object.keys(COLUMN_MAPPING).find(key => 
-            header.toLowerCase().includes(key.toLowerCase()) || 
-            key.toLowerCase().includes(header.toLowerCase())
-          );
-          if (mappedKey) {
-            columnIndices[COLUMN_MAPPING[mappedKey as keyof typeof COLUMN_MAPPING]] = index;
+          const headerLower = header.toLowerCase().trim();
+          
+          // Special handling for ID column - must be exactly column A (index 0)
+          if (index === 0 && headerLower.includes('id')) {
+            columnIndices['id'] = 0;
+          }
+          // Map other columns by name matching
+          else {
+            const mappedKey = Object.keys(COLUMN_MAPPING).find(key => 
+              headerLower.includes(key.toLowerCase()) || 
+              key.toLowerCase().includes(headerLower)
+            );
+            if (mappedKey && mappedKey !== 'ID') { // Skip ID since we handle it above
+              columnIndices[COLUMN_MAPPING[mappedKey as keyof typeof COLUMN_MAPPING]] = index;
+            }
           }
         });
         
