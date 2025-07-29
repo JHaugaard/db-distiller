@@ -59,7 +59,9 @@ export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> 
         
         // Override ID to always use Column A (index 0) regardless of header matching
         columnIndices['id'] = 0;
-        console.log('Overrode ID to use column 0 (Column A)');
+        
+        console.log('Column indices found:', columnIndices);
+        console.log('Headers around Status area:', headers.slice(10, 20).map((h, i) => `${i+10}: "${h}"`));
         
         // Process and filter rows
         const filteredData: SpreadsheetRow[] = [];
