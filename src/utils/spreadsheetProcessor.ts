@@ -47,35 +47,19 @@ export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> 
         
         // Create column index mapping
         const columnIndices: { [key: string]: number } = {};
-        
-        // Force ID to always be Column A (index 0)
-        columnIndices['id'] = 0;
-        console.log('Forced ID to column 0 (Column A)');
-        
         headers.forEach((header, index) => {
-          const headerLower = header.toLowerCase().trim();
-          
-          // Map other columns by name matching (skip index 0 since it's ID)
-          if (index !== 0) {
-            if (headerLower.includes('date received')) {
-              columnIndices['dateReceived'] = index;
-            } else if (headerLower.includes('principal investigator')) {
-              columnIndices['principalInvestigator'] = index;
-            } else if (headerLower.includes('sponsor') || headerLower.includes('contractor')) {
-              columnIndices['sponsorContractor'] = index;
-            } else if (headerLower.includes('cayuse')) {
-              columnIndices['cayuseId'] = index;
-            } else if (headerLower === 'status' || headerLower.includes('status')) {
-              columnIndices['status'] = index;
-            } else if (headerLower.includes('status date')) {
-              columnIndices['statusDate'] = index;
-            } else if (headerLower.includes('old db')) {
-              columnIndices['oldDbNumber'] = index;
-            } else if (headerLower.includes('gco') || headerLower.includes('gca') || headerLower.includes('scco')) {
-              columnIndices['gcoGcaScco'] = index;
-            }
+          const mappedKey = Object.keys(COLUMN_MAPPING).find(key => 
+            header.toLowerCase().includes(key.toLowerCase()) || 
+            key.toLowerCase().includes(header.toLowerCase())
+          );
+          if (mappedKey) {
+            columnIndices[COLUMN_MAPPING[mappedKey as keyof typeof COLUMN_MAPPING]] = index;
           }
         });
+        
+        // Override ID to always use Column A (index 0) regardless of header matching
+        columnIndices['id'] = 0;
+        console.log('Overrode ID to use column 0 (Column A)');
         
         // Process and filter rows
         const filteredData: SpreadsheetRow[] = [];
