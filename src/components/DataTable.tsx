@@ -31,6 +31,10 @@ const getStatusColor = (status: string) => {
       return 'bg-yellow-50 border-yellow-100';
     case 'Out for Signature':
       return 'bg-green-50 border-green-100';
+    case 'Set-up in Process':
+      return 'bg-orange-50 border-orange-100';
+    case 'Completed':
+      return 'bg-slate-50 border-slate-100';
     default:
       return '';
   }

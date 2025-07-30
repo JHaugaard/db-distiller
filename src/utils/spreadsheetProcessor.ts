@@ -1,14 +1,7 @@
 import * as XLSX from 'xlsx';
 import { SpreadsheetRow } from '@/components/DataTable';
 
-const VALID_STATUSES = [
-  'OSSRA Review',
-  'OSRAA Review',
-  'Internal Docs/Info Requested',
-  'External Docs/Info Requested',
-  'Out for Review',
-  'Out for Signature'
-];
+// This is now passed as a parameter instead of hardcoded
 
 const COLUMN_MAPPING = {
   'ID': 'id',
@@ -22,7 +15,7 @@ const COLUMN_MAPPING = {
   'GCO/GCA/SCCO': 'gcoGcaScco'
 };
 
-export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> => {
+export const processSpreadsheet = async (file: File, validStatuses: string[]): Promise<SpreadsheetRow[]> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     
@@ -103,7 +96,7 @@ export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> 
           }
           
           // Filter criteria: GCO/GCA/SCCO exactly "Haugaard" and valid status
-          if (gcoGcaScco === 'Haugaard' && VALID_STATUSES.includes(status)) {
+          if (gcoGcaScco === 'Haugaard' && validStatuses.includes(status)) {
             console.log('Found Haugaard row:', {
               rowIndex,
               gcoGcaScco,

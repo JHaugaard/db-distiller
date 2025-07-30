@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FileUpload } from '@/components/FileUpload';
 import { DataTable, SpreadsheetRow } from '@/components/DataTable';
+import { StatusFilter } from '@/components/StatusFilter';
 import { processSpreadsheet } from '@/utils/spreadsheetProcessor';
 import { useToast } from '@/hooks/use-toast';
 
@@ -8,13 +9,65 @@ const Index = () => {
   const [data, setData] = useState<SpreadsheetRow[]>([]);
   const [uploadTime, setUploadTime] = useState<Date | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const { toast } = useToast();
 
+  // Load saved statuses from localStorage on component mount
+  useEffect(() => {
+    const savedStatuses = localStorage.getItem('act-selected-statuses');
+    if (savedStatuses) {
+      try {
+        const parsed = JSON.parse(savedStatuses);
+        setSelectedStatuses(parsed);
+      } catch (error) {
+        // If parsing fails, default to all statuses
+        const allStatuses = [
+          'OSRAA Review',
+          'Internal Docs/Info Requested',
+          'External Docs/Info Requested',
+          'Out for Review',
+          'Out for Signature',
+          'Set-up in Process',
+          'Completed'
+        ];
+        setSelectedStatuses(allStatuses);
+      }
+    } else {
+      // Default to all statuses for first-time users
+      const allStatuses = [
+        'OSRAA Review',
+        'Internal Docs/Info Requested',
+        'External Docs/Info Requested',
+        'Out for Review',
+        'Out for Signature',
+        'Set-up in Process',
+        'Completed'
+      ];
+      setSelectedStatuses(allStatuses);
+    }
+  }, []);
+
+  // Save selected statuses to localStorage whenever they change
+  useEffect(() => {
+    if (selectedStatuses.length > 0) {
+      localStorage.setItem('act-selected-statuses', JSON.stringify(selectedStatuses));
+    }
+  }, [selectedStatuses]);
+
   const handleFileSelect = async (file: File) => {
+    if (selectedStatuses.length === 0) {
+      toast({
+        title: "No statuses selected",
+        description: "Please select at least one status to filter by before uploading",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsProcessing(true);
     
     try {
-      const processedData = await processSpreadsheet(file);
+      const processedData = await processSpreadsheet(file, selectedStatuses);
       setData(processedData);
       setUploadTime(new Date());
       
@@ -45,7 +98,11 @@ const Index = () => {
         </div>
         
         <div className="space-y-8">
-          <div className="print-hidden">
+          <div className="print-hidden space-y-6">
+            <StatusFilter 
+              selectedStatuses={selectedStatuses}
+              onStatusChange={setSelectedStatuses}
+            />
             <FileUpload 
               onFileSelect={handleFileSelect} 
               isProcessing={isProcessing}
