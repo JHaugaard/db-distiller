@@ -5,6 +5,7 @@ import { DataTable, SpreadsheetRow } from '@/components/DataTable';
 import { StatusFilter } from '@/components/StatusFilter';
 import { UserMenu } from '@/components/UserMenu';
 import { processSpreadsheet } from '@/utils/spreadsheetProcessor';
+import { filterSpreadsheetData } from '@/utils/spreadsheetFilter';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -12,10 +13,12 @@ import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const [data, setData] = useState<SpreadsheetRow[]>([]);
+  const [rawSpreadsheetData, setRawSpreadsheetData] = useState<SpreadsheetRow[]>([]);
   const [uploadTime, setUploadTime] = useState<Date | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
   const [userProfile, setUserProfile] = useState<any>(null);
+  const [dataTimeout, setDataTimeout] = useState<NodeJS.Timeout | null>(null);
   const { user, loading } = useAuth();
   const { toast } = useToast();
 
@@ -79,6 +82,41 @@ const Index = () => {
     }
   }, [selectedStatuses]);
 
+  // Filter data in real-time when statuses or raw data changes
+  useEffect(() => {
+    if (rawSpreadsheetData.length > 0 && userProfile?.last_name) {
+      const filteredData = filterSpreadsheetData(rawSpreadsheetData, selectedStatuses, userProfile.last_name);
+      setData(filteredData);
+      
+      // Reset the 5-minute timeout on status change
+      if (dataTimeout) {
+        clearTimeout(dataTimeout);
+      }
+      
+      const newTimeout = setTimeout(() => {
+        setRawSpreadsheetData([]);
+        setData([]);
+        setUploadTime(null);
+        toast({
+          title: "Data expired",
+          description: "Please upload a new spreadsheet to continue filtering",
+          variant: "destructive",
+        });
+      }, 5 * 60 * 1000); // 5 minutes
+      
+      setDataTimeout(newTimeout);
+    }
+  }, [selectedStatuses, rawSpreadsheetData, userProfile?.last_name]);
+
+  // Clear timeout on component unmount
+  useEffect(() => {
+    return () => {
+      if (dataTimeout) {
+        clearTimeout(dataTimeout);
+      }
+    };
+  }, [dataTimeout]);
+
   const handleFileSelect = async (file: File) => {
     if (selectedStatuses.length === 0) {
       toast({
@@ -101,13 +139,17 @@ const Index = () => {
     setIsProcessing(true);
     
     try {
-      const processedData = await processSpreadsheet(file, selectedStatuses, userProfile.last_name);
-      setData(processedData);
+      const rawData = await processSpreadsheet(file);
+      setRawSpreadsheetData(rawData);
       setUploadTime(new Date());
+      
+      // Filter the data immediately
+      const filteredData = filterSpreadsheetData(rawData, selectedStatuses, userProfile.last_name);
+      setData(filteredData);
       
       toast({
         title: "File processed successfully",
-        description: `Found ${processedData.length} matching records for ${userProfile.last_name}`,
+        description: `Loaded ${rawData.length} total records. Showing ${filteredData.length} matching records for ${userProfile.last_name}`,
       });
     } catch (error) {
       console.error('Error processing file:', error);
@@ -162,10 +204,13 @@ const Index = () => {
             <StatusFilter 
               selectedStatuses={selectedStatuses}
               onStatusChange={setSelectedStatuses}
+              hasSpreadsheetData={rawSpreadsheetData.length > 0}
             />
             <FileUpload 
               onFileSelect={handleFileSelect} 
               isProcessing={isProcessing}
+              hasSpreadsheetData={rawSpreadsheetData.length > 0}
+              uploadTime={uploadTime}
             />
           </div>
           

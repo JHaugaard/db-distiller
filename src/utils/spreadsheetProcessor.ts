@@ -15,7 +15,7 @@ const COLUMN_MAPPING = {
   'GCO/GCA/SCCO': 'gcoGcaScco'
 };
 
-export const processSpreadsheet = async (file: File, validStatuses: string[], userLastName: string): Promise<SpreadsheetRow[]> => {
+export const processSpreadsheet = async (file: File): Promise<SpreadsheetRow[]> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     
@@ -69,15 +69,13 @@ export const processSpreadsheet = async (file: File, validStatuses: string[], us
         console.log('Column indices found:', columnIndices);
         console.log('Headers around Status area:', headers.slice(10, 20).map((h, i) => `${i+10}: "${h}"`));
         
-        // Process and filter rows
-        const filteredData: SpreadsheetRow[] = [];
+        // Process all rows and return them all (filtering will happen later)
+        const allData: SpreadsheetRow[] = [];
         
         console.log('Column indices found:', columnIndices);
         console.log('Total rows to process:', rows.length);
         
         rows.forEach((row, rowIndex) => {
-          const gcoGcaScco = row[columnIndices.gcoGcaScco]?.toString().trim();
-          
           // Ensure Status is always treated as text string
           let status = '';
           const statusValue = row[columnIndices.status];
@@ -85,72 +83,45 @@ export const processSpreadsheet = async (file: File, validStatuses: string[], us
             status = String(statusValue).trim();
           }
           
-          // Debug logging for first few rows
-          if (rowIndex < 5) {
-            console.log(`Row ${rowIndex}:`, {
-              gcoGcaScco: `"${gcoGcaScco}"`,
-              status: `"${status}"`,
-              rawGco: row[columnIndices.gcoGcaScco],
-              rawStatus: row[columnIndices.status]
-            });
-          }
-          
-          // Filter criteria: GCO/GCA/SCCO matches user's last name and valid status
-          if (gcoGcaScco === userLastName && validStatuses.includes(status)) {
-            console.log(`Found ${userLastName} row:`, {
-              rowIndex,
-              gcoGcaScco,
-              id: row[columnIndices.id],
-              principalInvestigator: row[columnIndices.principalInvestigator],
-              status,
-              fullRow: row
-            });
-            // Format date received properly
-            const dateReceived = row[columnIndices.dateReceived];
-            let formattedDateReceived = '';
-            if (dateReceived) {
-              // Handle Excel date serial numbers
-              if (typeof dateReceived === 'number') {
-                const excelDate = new Date((dateReceived - 25569) * 86400 * 1000);
-                formattedDateReceived = excelDate.toLocaleDateString('en-US');
-              } else {
-                formattedDateReceived = dateReceived.toString();
-              }
+          // Format date received properly
+          const dateReceived = row[columnIndices.dateReceived];
+          let formattedDateReceived = '';
+          if (dateReceived) {
+            // Handle Excel date serial numbers
+            if (typeof dateReceived === 'number') {
+              const excelDate = new Date((dateReceived - 25569) * 86400 * 1000);
+              formattedDateReceived = excelDate.toLocaleDateString('en-US');
+            } else {
+              formattedDateReceived = dateReceived.toString();
             }
-
-            // Format status date properly
-            const statusDate = row[columnIndices.statusDate];
-            let formattedStatusDate = '';
-            if (statusDate) {
-              if (typeof statusDate === 'number') {
-                const excelDate = new Date((statusDate - 25569) * 86400 * 1000);
-                formattedStatusDate = excelDate.toLocaleDateString('en-US');
-              } else {
-                formattedStatusDate = statusDate.toString();
-              }
-            }
-
-            filteredData.push({
-              id: row[columnIndices.id]?.toString() || '',
-              dateReceived: formattedDateReceived,
-              principalInvestigator: row[columnIndices.principalInvestigator]?.toString() || '',
-              sponsorContractor: row[columnIndices.sponsorContractor]?.toString() || '',
-              cayuseId: row[columnIndices.cayuseId]?.toString() || '',
-              status: status,
-              statusDate: formattedStatusDate,
-              oldDbNumber: row[columnIndices.oldDbNumber]?.toString() || ''
-            });
           }
+
+          // Format status date properly
+          const statusDate = row[columnIndices.statusDate];
+          let formattedStatusDate = '';
+          if (statusDate) {
+            if (typeof statusDate === 'number') {
+              const excelDate = new Date((statusDate - 25569) * 86400 * 1000);
+              formattedStatusDate = excelDate.toLocaleDateString('en-US');
+            } else {
+              formattedStatusDate = statusDate.toString();
+            }
+          }
+
+          allData.push({
+            id: row[columnIndices.id]?.toString() || '',
+            dateReceived: formattedDateReceived,
+            principalInvestigator: row[columnIndices.principalInvestigator]?.toString() || '',
+            sponsorContractor: row[columnIndices.sponsorContractor]?.toString() || '',
+            cayuseId: row[columnIndices.cayuseId]?.toString() || '',
+            status: status,
+            statusDate: formattedStatusDate,
+            oldDbNumber: row[columnIndices.oldDbNumber]?.toString() || '',
+            gcoGcaScco: row[columnIndices.gcoGcaScco]?.toString() || '' // Add this for filtering
+          });
         });
         
-        // Sort by ID in descending order
-        filteredData.sort((a, b) => {
-          const idA = parseInt(a.id) || 0;
-          const idB = parseInt(b.id) || 0;
-          return idB - idA;
-        });
-        
-        resolve(filteredData);
+        resolve(allData);
       } catch (error) {
         reject(error);
       }

@@ -10,6 +10,7 @@ export interface SpreadsheetRow {
   status: string;
   statusDate: string;
   oldDbNumber: string;
+  gcoGcaScco?: string; // Optional field used for filtering
 }
 
 interface DataTableProps {
