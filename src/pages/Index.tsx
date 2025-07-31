@@ -192,7 +192,7 @@ const Index = () => {
                 {userProfile?.last_name && ` for ${userProfile.last_name}`}
               </p>
               <p>
-                Drop in the FY26 Sponsored Agreements DB as an Excel Spreadsheet. Choose the Statuses you want to show.
+                Drop in the FY26 Sponsored Agreements DB as an Excel Spreadsheet. Choose the Statuses you want to show. Check/Uncheck to update.
               </p>
             </div>
           </div>
