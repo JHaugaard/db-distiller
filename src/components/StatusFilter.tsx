@@ -56,7 +56,7 @@ export const StatusFilter = ({ selectedStatuses, onStatusChange }: StatusFilterP
           </div>
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Select which statuses to include when processing spreadsheet data. ({selectedStatuses.length} of {ALL_STATUSES.length} selected)
+          Select statuses to include when distilling the DB. ({selectedStatuses.length} of {ALL_STATUSES.length} selected)
         </p>
       </CardHeader>
       <CardContent>

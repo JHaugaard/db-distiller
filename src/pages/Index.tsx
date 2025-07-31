@@ -144,10 +144,15 @@ const Index = () => {
         <div className="mb-8 print-hidden flex justify-between items-start">
           <div>
             <h1 className="text-3xl font-bold mb-2">ACT Database Distiller</h1>
-            <p className="text-muted-foreground">
-              Upload and process sponsored agreements database spreadsheets
-              {userProfile?.last_name && ` for ${userProfile.last_name}`}
-            </p>
+            <div className="text-muted-foreground space-y-1">
+              <p>
+                FY 2026 Sponsored Agreements Database spreadsheet distilled
+                {userProfile?.last_name && ` for ${userProfile.last_name}`}
+              </p>
+              <p>
+                Drop in the FY26 Sponsored Agreements DB as an Excel Spreadsheet. Choose the Statuses you want to show.
+              </p>
+            </div>
           </div>
           <UserMenu />
         </div>

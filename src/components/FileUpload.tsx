@@ -37,7 +37,7 @@ export const FileUpload = ({ onFileSelect, isProcessing }: FileUploadProps) => {
       <div className="flex flex-col items-center space-y-4">
         <Upload className="h-12 w-12 text-muted-foreground" />
         <div>
-          <h3 className="text-lg font-medium mb-2">Upload Spreadsheet</h3>
+          <h3 className="text-lg font-medium mb-2">DB as Excel Spreadsheet</h3>
           <p className="text-sm text-muted-foreground mb-4">
             Drop your FY26 Sponsored Agreements DataBase.xlsx file here or click to browse
           </p>
