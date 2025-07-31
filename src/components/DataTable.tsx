@@ -23,21 +23,21 @@ interface DataTableProps {
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'OSSRA Review':
-      return 'bg-purple-50 border-purple-100';
+      return 'bg-purple-50 border-purple-100 print:bg-purple-50 print:border-purple-100';
     case 'OSRAA Review':
-      return 'bg-indigo-50 border-indigo-100';
+      return 'bg-indigo-50 border-indigo-100 print:bg-indigo-50 print:border-indigo-100';
     case 'Internal Docs/Info Requested':
-      return 'bg-blue-50 border-blue-100';
+      return 'bg-blue-50 border-blue-100 print:bg-blue-50 print:border-blue-100';
     case 'External Docs/Info Requested':
-      return 'bg-emerald-50 border-emerald-100';
+      return 'bg-emerald-50 border-emerald-100 print:bg-emerald-50 print:border-emerald-100';
     case 'Out for Review':
-      return 'bg-yellow-50 border-yellow-100';
+      return 'bg-yellow-50 border-yellow-100 print:bg-yellow-50 print:border-yellow-100';
     case 'Out for Signature':
-      return 'bg-green-50 border-green-100';
+      return 'bg-green-50 border-green-100 print:bg-green-50 print:border-green-100';
     case 'Set-up in Process':
-      return 'bg-orange-50 border-orange-100';
+      return 'bg-orange-50 border-orange-100 print:bg-orange-50 print:border-orange-100';
     case 'Completed':
-      return 'bg-slate-50 border-slate-100';
+      return 'bg-slate-50 border-slate-100 print:bg-slate-50 print:border-slate-100';
     default:
       return '';
   }
@@ -63,28 +63,28 @@ export const DataTable = ({ data, uploadTime }: DataTableProps) => {
       <Card className="overflow-hidden print:shadow-none print:border-0">
         <Table className="print:text-xs">
           <TableHeader>
-            <TableRow>
-              <TableHead className="font-medium print:font-bold">ID</TableHead>
-              <TableHead className="font-medium print:font-bold">Date Received</TableHead>
-              <TableHead className="font-medium print:font-bold">Principal Investigator</TableHead>
-              <TableHead className="font-medium print:font-bold">Sponsor/Contractor</TableHead>
-              <TableHead className="font-medium print:font-bold">Cayuse ID</TableHead>
-              <TableHead className="font-medium print:font-bold">Status</TableHead>
-              <TableHead className="font-medium print:font-bold">Status Date</TableHead>
-              <TableHead className="font-medium print:font-bold">OLD DB#</TableHead>
+            <TableRow className="h-8">
+              <TableHead className="font-medium print:font-bold w-16 px-2 py-1 text-xs">ID</TableHead>
+              <TableHead className="font-medium print:font-bold w-24 px-2 py-1 text-xs">Date Received</TableHead>
+              <TableHead className="font-medium print:font-bold px-2 py-1 text-xs">Principal Investigator</TableHead>
+              <TableHead className="font-medium print:font-bold px-2 py-1 text-xs">Sponsor/Contractor</TableHead>
+              <TableHead className="font-medium print:font-bold px-2 py-1 text-xs">Cayuse ID</TableHead>
+              <TableHead className="font-medium print:font-bold px-2 py-1 text-xs">Status</TableHead>
+              <TableHead className="font-medium print:font-bold w-24 px-2 py-1 text-xs">Status Date</TableHead>
+              <TableHead className="font-medium print:font-bold px-2 py-1 text-xs">OLD DB#</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {data.map((row, index) => (
-              <TableRow key={index} className={getStatusColor(row.status)}>
-                <TableCell className="font-mono text-sm">{row.id}</TableCell>
-                <TableCell className="text-sm">{row.dateReceived}</TableCell>
-                <TableCell className="text-sm">{row.principalInvestigator}</TableCell>
-                <TableCell className="text-sm">{row.sponsorContractor}</TableCell>
-                <TableCell className="font-mono text-sm">{row.cayuseId}</TableCell>
-                <TableCell className="text-sm">{row.status}</TableCell>
-                <TableCell className="text-sm">{row.statusDate}</TableCell>
-                <TableCell className="font-mono text-sm">{row.oldDbNumber}</TableCell>
+              <TableRow key={index} className={`${getStatusColor(row.status)} h-8`}>
+                <TableCell className="font-mono text-xs px-2 py-1 w-16">{row.id}</TableCell>
+                <TableCell className="text-xs px-2 py-1 w-24">{row.dateReceived}</TableCell>
+                <TableCell className="text-xs px-2 py-1">{row.principalInvestigator}</TableCell>
+                <TableCell className="text-xs px-2 py-1">{row.sponsorContractor}</TableCell>
+                <TableCell className="font-mono text-xs px-2 py-1">{row.cayuseId}</TableCell>
+                <TableCell className="text-xs px-2 py-1">{row.status}</TableCell>
+                <TableCell className="text-xs px-2 py-1 w-24">{row.statusDate}</TableCell>
+                <TableCell className="font-mono text-xs px-2 py-1">{row.oldDbNumber}</TableCell>
               </TableRow>
             ))}
           </TableBody>
