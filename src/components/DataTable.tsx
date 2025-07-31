@@ -1,5 +1,7 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Printer } from 'lucide-react';
 
 export interface SpreadsheetRow {
   id: string;
@@ -42,10 +44,20 @@ const getStatusColor = (status: string) => {
 };
 
 export const DataTable = ({ data, uploadTime }: DataTableProps) => {
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="space-y-4">
-      <div className="text-sm text-muted-foreground print-hidden">
-        Last upload: {uploadTime.toLocaleString()}
+      <div className="flex justify-between items-center print-hidden">
+        <div className="text-sm text-muted-foreground">
+          Last upload: {uploadTime.toLocaleString()}
+        </div>
+        <Button onClick={handlePrint} variant="outline" size="sm">
+          <Printer className="h-4 w-4" />
+          Print
+        </Button>
       </div>
       
       <Card className="overflow-hidden print:shadow-none print:border-0">
