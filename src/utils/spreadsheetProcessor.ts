@@ -15,7 +15,7 @@ const COLUMN_MAPPING = {
   'GCO/GCA/SCCO': 'gcoGcaScco'
 };
 
-export const processSpreadsheet = async (file: File, validStatuses: string[]): Promise<SpreadsheetRow[]> => {
+export const processSpreadsheet = async (file: File, validStatuses: string[], userLastName: string): Promise<SpreadsheetRow[]> => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     
@@ -95,9 +95,9 @@ export const processSpreadsheet = async (file: File, validStatuses: string[]): P
             });
           }
           
-          // Filter criteria: GCO/GCA/SCCO exactly "Haugaard" and valid status
-          if (gcoGcaScco === 'Haugaard' && validStatuses.includes(status)) {
-            console.log('Found Haugaard row:', {
+          // Filter criteria: GCO/GCA/SCCO matches user's last name and valid status
+          if (gcoGcaScco === userLastName && validStatuses.includes(status)) {
+            console.log(`Found ${userLastName} row:`, {
               rowIndex,
               gcoGcaScco,
               id: row[columnIndices.id],

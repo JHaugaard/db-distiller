@@ -1,16 +1,41 @@
 import { useState, useEffect } from 'react';
+import { Navigate, Link } from 'react-router-dom';
 import { FileUpload } from '@/components/FileUpload';
 import { DataTable, SpreadsheetRow } from '@/components/DataTable';
 import { StatusFilter } from '@/components/StatusFilter';
+import { UserMenu } from '@/components/UserMenu';
 import { processSpreadsheet } from '@/utils/spreadsheetProcessor';
+import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 
 const Index = () => {
   const [data, setData] = useState<SpreadsheetRow[]>([]);
   const [uploadTime, setUploadTime] = useState<Date | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const { user, loading } = useAuth();
   const { toast } = useToast();
+
+  // Fetch user profile when user is loaded
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (user) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('*')
+          .eq('user_id', user.id)
+          .single();
+        setUserProfile(profile);
+      }
+    };
+
+    if (user) {
+      fetchUserProfile();
+    }
+  }, [user]);
 
   // Load saved statuses from localStorage on component mount
   useEffect(() => {
@@ -64,16 +89,25 @@ const Index = () => {
       return;
     }
 
+    if (!userProfile?.last_name) {
+      toast({
+        title: "Profile incomplete",
+        description: "Please ensure your profile has a last name set up",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsProcessing(true);
     
     try {
-      const processedData = await processSpreadsheet(file, selectedStatuses);
+      const processedData = await processSpreadsheet(file, selectedStatuses, userProfile.last_name);
       setData(processedData);
       setUploadTime(new Date());
       
       toast({
         title: "File processed successfully",
-        description: `Found ${processedData.length} matching records`,
+        description: `Found ${processedData.length} matching records for ${userProfile.last_name}`,
       });
     } catch (error) {
       console.error('Error processing file:', error);
@@ -87,14 +121,35 @@ const Index = () => {
     }
   };
 
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Redirect to auth page if not authenticated
+  if (!user) {
+    return <Navigate to="/auth" replace />;
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        <div className="mb-8 print-hidden">
-          <h1 className="text-3xl font-bold mb-2">ACT Database Distiller</h1>
-          <p className="text-muted-foreground">
-            Upload and process sponsored agreements database spreadsheets
-          </p>
+        <div className="mb-8 print-hidden flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold mb-2">ACT Database Distiller</h1>
+            <p className="text-muted-foreground">
+              Upload and process sponsored agreements database spreadsheets
+              {userProfile?.last_name && ` for ${userProfile.last_name}`}
+            </p>
+          </div>
+          <UserMenu />
         </div>
         
         <div className="space-y-8">
