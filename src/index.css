@@ -136,4 +136,61 @@ All colors MUST be HSL.
     max-width: none !important;
     padding: 0 !important;
   }
+  
+  /* Force print colors for status rows */
+  .status-purple {
+    background-color: #f3f4f6 !important;
+    border-left: 4px solid #8b5cf6 !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  .status-indigo {
+    background-color: #f1f5f9 !important;
+    border-left: 4px solid #6366f1 !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  .status-blue {
+    background-color: #eff6ff !important;
+    border-left: 4px solid #3b82f6 !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  .status-emerald {
+    background-color: #ecfdf5 !important;
+    border-left: 4px solid #10b981 !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  .status-yellow {
+    background-color: #fffbeb !important;
+    border-left: 4px solid #f59e0b !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  .status-green {
+    background-color: #f0fdf4 !important;
+    border-left: 4px solid #22c55e !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  .status-orange {
+    background-color: #fff7ed !important;
+    border-left: 4px solid #ea580c !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+  
+  .status-slate {
+    background-color: #f8fafc !important;
+    border-left: 4px solid #64748b !important;
+    -webkit-print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
 }

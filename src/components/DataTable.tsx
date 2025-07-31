@@ -23,21 +23,21 @@ interface DataTableProps {
 const getStatusColor = (status: string) => {
   switch (status) {
     case 'OSSRA Review':
-      return 'bg-purple-50 border-purple-100 print:bg-purple-50 print:border-purple-100';
+      return 'bg-purple-50 border-purple-100 status-purple';
     case 'OSRAA Review':
-      return 'bg-indigo-50 border-indigo-100 print:bg-indigo-50 print:border-indigo-100';
+      return 'bg-indigo-50 border-indigo-100 status-indigo';
     case 'Internal Docs/Info Requested':
-      return 'bg-blue-50 border-blue-100 print:bg-blue-50 print:border-blue-100';
+      return 'bg-blue-50 border-blue-100 status-blue';
     case 'External Docs/Info Requested':
-      return 'bg-emerald-50 border-emerald-100 print:bg-emerald-50 print:border-emerald-100';
+      return 'bg-emerald-50 border-emerald-100 status-emerald';
     case 'Out for Review':
-      return 'bg-yellow-50 border-yellow-100 print:bg-yellow-50 print:border-yellow-100';
+      return 'bg-yellow-50 border-yellow-100 status-yellow';
     case 'Out for Signature':
-      return 'bg-green-50 border-green-100 print:bg-green-50 print:border-green-100';
+      return 'bg-green-50 border-green-100 status-green';
     case 'Set-up in Process':
-      return 'bg-orange-50 border-orange-100 print:bg-orange-50 print:border-orange-100';
+      return 'bg-orange-50 border-orange-100 status-orange';
     case 'Completed':
-      return 'bg-slate-50 border-slate-100 print:bg-slate-50 print:border-slate-100';
+      return 'bg-slate-50 border-slate-100 status-slate';
     default:
       return '';
   }
