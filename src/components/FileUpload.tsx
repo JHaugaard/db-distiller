@@ -44,7 +44,7 @@ export const FileUpload = ({ onFileSelect, isProcessing, hasSpreadsheetData = fa
           </h3>
           <p className="text-sm text-muted-foreground mb-2">
             {hasSpreadsheetData 
-              ? 'Upload a new spreadsheet to replace the current data'
+              ? 'Drop a new spreadsheet to replace the current one'
               : 'Drop your FY26 Sponsored Agreements DataBase.xlsx file here or click to browse'
             }
           </p>

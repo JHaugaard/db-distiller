@@ -99,7 +99,7 @@ const Index = () => {
         setUploadTime(null);
         toast({
           title: "Data expired",
-          description: "Please upload a new spreadsheet to continue filtering",
+          description: "Please drop in a new spreadsheet to continue filtering",
           variant: "destructive",
         });
       }, 5 * 60 * 1000); // 5 minutes
