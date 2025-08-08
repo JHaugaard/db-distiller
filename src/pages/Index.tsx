@@ -201,16 +201,16 @@ const Index = () => {
         
         <div className="space-y-8">
           <div className="print-hidden space-y-6">
-            <StatusFilter 
-              selectedStatuses={selectedStatuses}
-              onStatusChange={setSelectedStatuses}
-              hasSpreadsheetData={rawSpreadsheetData.length > 0}
-            />
             <FileUpload 
               onFileSelect={handleFileSelect} 
               isProcessing={isProcessing}
               hasSpreadsheetData={rawSpreadsheetData.length > 0}
               uploadTime={uploadTime}
+            />
+            <StatusFilter 
+              selectedStatuses={selectedStatuses}
+              onStatusChange={setSelectedStatuses}
+              hasSpreadsheetData={rawSpreadsheetData.length > 0}
             />
           </div>
           
